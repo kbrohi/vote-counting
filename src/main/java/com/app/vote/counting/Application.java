@@ -38,6 +38,9 @@ public class Application {
 		}
 		
 
-		String winner = Utils.findWinner(ballots);
+		String winner = Utils.findWinner(ballots, places);
+		
+		System.out.println("*******************************************************************************\n\n The Winner Is: " + winner + " \n************************************");
+		scan.close();
 	}
 }
