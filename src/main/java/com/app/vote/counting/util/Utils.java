@@ -61,16 +61,9 @@ public class Utils {
 		for(Map.Entry<Character, String> place : places.entrySet()) {
 			
 			List<Map<String, Integer>> placeData = getDatabyKey(place.getValue(), ballots);
-			data.put(place.getValue(), placeData);
+			if(!placeData.isEmpty()) 
+				data.put(place.getValue(), placeData);
 		}
-//		System.out.println("*********Organize Data*******************************");
-//		
-//		for(Map.Entry<String, List<Map<String, Integer>>> entry: data.entrySet()) {
-//			System.out.println("****************" + entry.getKey() + "***************");
-//			
-//			entry.getValue().stream().forEach(en -> en.entrySet().forEach(e -> System.out.println(e.getKey() + " : " + e.getValue())));
-//			
-//		}
 		
 		return data;
 	}
@@ -82,13 +75,35 @@ public class Utils {
 	}
 	
 	private static String roundTwoDataByVoting(Map<String, List<Map<String, Integer>>> data, int winnerRange) {
-		
 		Map.Entry<String, List<Map<String, Integer>>> leastVotes = Collections.min(data.entrySet(), Comparator.comparing(e -> e.getValue().size()));
 		
-		System.out.println("Least Value : " + leastVotes.getKey());
-		leastVotes.getValue().stream().forEach(en -> en.entrySet().forEach(e -> System.out.println(e.getKey() + " : " + e.getValue())));
+		Map<String, Integer> secondPreference = leastVotes.getValue().stream().filter( l -> l.values().stream().filter(v -> v.intValue() == 2).findFirst().isPresent()).findFirst().get();
+		String key = secondPreference.entrySet().stream().filter(e -> e.getValue().intValue() == 2).map(Map.Entry::getKey).findFirst().get();
+		
+		List<Map<String, Integer>> newData = data.get(key);
+		newData.add(secondPreference);
+		data.put(key, newData);
+		data.remove(leastVotes.getKey());
+
+		for(Map.Entry<String, List<Map<String, Integer>>> entry: data.entrySet()) {
+			System.out.println("****************" + entry.getKey() + "*************** Size: " + entry.getValue().size());
+			
+			entry.getValue().stream().forEach(en -> en.entrySet().forEach(e -> System.out.println(e.getKey() + " : " + e.getValue())));
+			
+			
+		}
+		
+		Map<String, List<Map<String, Integer>>> filteredData = data.entrySet().stream().filter(place -> place.getValue().size() >= winnerRange).collect(Collectors.toMap(e -> e.getKey(), g -> g.getValue()));
+		
+		System.out.println("Filtered: " + filteredData.entrySet().size());
+		return filteredData.entrySet().size() == 1 ? filteredData.entrySet().stream().findFirst().get().getKey() : roundThreeCountVotes(data, winnerRange);
+	}
+
+	private static String roundThreeCountVotes(Map<String, List<Map<String, Integer>>> data, int winnerRange) {
 		
 		return null;
 	}
+	
+	
 	
 }
