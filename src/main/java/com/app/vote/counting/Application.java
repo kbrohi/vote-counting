@@ -1,8 +1,6 @@
 package com.app.vote.counting;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import com.app.vote.counting.util.Utils;
 import com.app.vote.counting.util.VotingOptionsFileLoader;
@@ -14,14 +12,14 @@ public class Application {
 		//loading the voting options from file options.txt
 		VotingOptionsFileLoader votingOptionsFileLoader = new VotingOptionsFileLoader();
 		String options = votingOptionsFileLoader.loadOptions();
-		System.out.println(options);
+//		System.out.println(options);
 		
 		//display options with prefix
 		System.out.println(Utils.getOptionsWithPrefix(options));
 		
 		Map<String, Map<String, Integer>> ballots = new HashMap<String, Map<String,Integer>>();
 		Map<Character, String> places = Utils.options(options);
-		
+
 		int count = 1;
 		Scanner scan = new Scanner(System.in);
 		String input;
@@ -32,15 +30,14 @@ public class Application {
 				values.put(places.get(ch), i + 1);
 			}
 			
-			ballots.put("Candidate " + count, values);
-			
-			count++;
+			ballots.put("Candidate " + count++, values);
+			System.out.println(Utils.getOptionsWithPrefix(options));
 		}
 		
 
 		String winner = Utils.findWinner(ballots, places);
 		
-		System.out.println("*******************************************************************************\n\n The Winner Is: " + winner + " \n************************************");
+		System.out.println("*********************************************************\n\n The Winner Is: " + winner + " \n************************************");
 		scan.close();
 	}
 }
